@@ -13,6 +13,13 @@ for i in range(NUMBER_OF_JOBS):
         print(f"Client created job {i+1} of type B")
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 5011)
+server_address = ('localhost', 5013)
 client_socket.connect(server_address)
 print("Client is connecting...")
+
+for job in jobs:
+    job_id = job["id"]
+    job_type = job["type"]
+    job = f"ID: {job_id}, Type: {job_type} \n"
+    client_socket.send(job.encode())
+    print(f"Client has submitted job {job_id} to Master")
