@@ -13,7 +13,7 @@ for i in range(NUMBER_OF_JOBS):
         print(f"Client created job {i+1} of type B")
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 5013)
+server_address = ('localhost', 5016)
 client_socket.connect(server_address)
 print("Client is connecting...")
 
