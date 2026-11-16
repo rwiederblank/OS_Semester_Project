@@ -1,4 +1,5 @@
 import time
+import socket
 
 SLAVE_TYPE = "B"
 
@@ -13,9 +14,32 @@ def process_job(job_id, job_type):
     else:
         seconds = 10
 
-    print(f"Slave A received job {job_id}, type {job_type}.")
+    print(f"Slave B received job {job_id}, type {job_type}.")
     time.sleep(seconds)
 
-    result = f"Job {job_id} completed by Slave A in {seconds} seconds."
+    result = f"Job {job_id} completed by Slave B in {seconds} seconds."
     print(result)
     return result
+
+slave_b_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ("localhost", 5016)
+slave_b_socket.connect(server_address)
+print("Slave B is connecting...")
+
+identification = "SLAVE_B\n"
+slave_b_socket.sendall(identification.encode())
+
+while True:
+    job = slave_b_socket.recv(1024).decode()
+
+    if job == "":
+        break
+
+    job_parts = job.split(",")
+    job_id = job_parts[0].split(":")[1].strip()
+    job_type = job_parts[1].split(":")[1].strip()
+
+    result = process_job(job_id, job_type)
+    slave_b_socket.sendall((result + "\n").encode())
+
+slave_b_socket.close()
