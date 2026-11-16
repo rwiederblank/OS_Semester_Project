@@ -17,6 +17,9 @@ server_address = ('localhost', 5016)
 client_socket.connect(server_address)
 print("Client is connecting...")
 
+identification = "CLIENT\n"
+client_socket.send(identification.encode())
+
 for job in jobs:
     job_id = job["id"]
     job_type = job["type"]
