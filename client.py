@@ -1,4 +1,5 @@
 import socket
+import time
 
 NUMBER_OF_JOBS = 4
 jobs = []
@@ -19,6 +20,8 @@ print("Client is connecting...")
 
 identification = "CLIENT\n"
 client_socket.send(identification.encode())
+#make sure the messages do not get sent in one package
+time.sleep(0.1)
 
 for job in jobs:
     job_id = job["id"]
@@ -26,3 +29,5 @@ for job in jobs:
     job = f"ID: {job_id}, Type: {job_type} \n"
     client_socket.send(job.encode())
     print(f"Client has submitted job {job_id} to Master")
+
+client_socket.close()
