@@ -17,18 +17,17 @@ def process_job(job_id, job_type):
     print(f"Slave A received job {job_id}, type {job_type}.")
     time.sleep(seconds)
 
-    result = f"Job {job_id} completed by Slave A in {seconds} seconds. \n"
+    result = f"Job {job_id} completed by Slave A in {seconds} seconds."
     print(result)
     return result
 
 slave_a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('localhost', 5019)
 slave_a_socket.connect(server_address)
-print("Slave A is connecting...")
+print("Slave A connected to Master.")
 
 identification = "SLAVE_A\n"
 slave_a_socket.sendall(identification.encode())
-print(f"Slave A informed master that job is completed.")
 
 while True:
     job = slave_a_socket.recv(1024).decode()
@@ -40,5 +39,6 @@ while True:
 
     result = process_job(job_id, job_type)
     slave_a_socket.sendall((result + "\n").encode())
+    print("Slave A informed Master that the job is complete.")
 
 slave_a_socket.close()

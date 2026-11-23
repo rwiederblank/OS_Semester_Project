@@ -72,7 +72,7 @@ def slave_handler(slave_socket, slave_name, slave_type):
             print(f"Master received completion from {slave_name}.")
 
             try:
-                client_socket.sendall(result.encode())
+                client_socket.sendall((result + "\n").encode())
             except OSError as error:
                 print(f"Could not communicate with {client_socket}: {error}")
 
