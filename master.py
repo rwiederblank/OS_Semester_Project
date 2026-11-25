@@ -17,6 +17,8 @@ lock = threading.Lock()
 
 def handle_client(client_socket):
     global total_remaining_a, total_remaining_b
+    client_send_lock  = threading.Lock()
+    
     while True:
         job = client_socket.recv(1024).decode()
         if not job:
@@ -49,17 +51,17 @@ def handle_client(client_socket):
                 if projected_a <= projected_b:
                     total_remaining_a += cost_slave_a
                     print("Master assigned job to Slave A.")
-                    job_queue_a.put((job_id, job_type, cost_slave_a, client_socket))
+                    job_queue_a.put((job_id, job_type, cost_slave_a, client_socket, client_send_lock))
                 else:
                     total_remaining_b += cost_slave_b
                     print("Master assigned job to Slave B.")
-                    job_queue_b.put((job_id, job_type, cost_slave_b, client_socket))
+                    job_queue_b.put((job_id, job_type, cost_slave_b, client_socket, client_send_lock))
 
 
 def slave_handler(slave_socket, slave_name, slave_type):
     global total_remaining_a, total_remaining_b
     while True:
-        job_id, job_type, job_cost, client_socket = slave_type.get()
+        job_id, job_type, job_cost, client_socket, client_send_lock = slave_type.get()
         try:
             job_message = f'ID:{job_id}, Type:{job_type}\n'
             slave_socket.sendall(job_message.encode())
@@ -72,7 +74,8 @@ def slave_handler(slave_socket, slave_name, slave_type):
             print(f"Master received completion from {slave_name}.")
 
             try:
-                client_socket.sendall((result + "\n").encode())
+                with client_send_lock:
+                    client_socket.sendall((result + "\n").encode())
             except OSError as error:
                 print(f"Could not communicate with {client_socket}: {error}")
 
