@@ -4,20 +4,16 @@ import random
 
 
 client_id = random.randint(10,99)
-NUMBER_OF_JOBS = 4
+NUMBER_OF_JOBS = 6
 jobs = []
 for i in range(NUMBER_OF_JOBS):
-    if i % 2 == 0:
-        job = {"id":i+1, "type":"A"}
-        jobs.append(job)
-        print(f"Client created job {i+1}-{client_id} of type A")
-    else:
-        job = {"id": i + 1, "type": "B"}
-        jobs.append(job)
-        print(f"Client created job {i+1}-{client_id} of type B")
+    job_type = "B" if i == 1 else "A"
+    job = {"id": i + 1, "type": job_type}
+    jobs.append(job)
+    print(f"Client created job {i + 1}-{client_id} of type {job_type}")
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 5019)
+server_address = ('localhost', 5021)
 client_socket.connect(server_address)
 print("Client is connecting...")
 
